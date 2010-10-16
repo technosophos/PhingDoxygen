@@ -1,6 +1,6 @@
 # PhingDoxygen
 
-Basic information about the project.
+Phing tasks for running Doxygen and generating API documentation.
 
 ## Installation
 
