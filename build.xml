@@ -183,10 +183,19 @@ To print this message, do:
   <includepath classpath="../Phing-Pirum/src"/>
   <taskdef classname="PhingPirum.Task.PirumBuildTask" name="pirumbuild"/>
   <taskdef classname="PhingPirum.Task.PirumAddTask" name="pirumadd"/>
-  <property name="pearchannel" value="../pear.querypath.org"/>
+  <property name="pearchannel" value="../pear.querypath.org/pear"/>
   
   <includepath classpath="./src"/>
   <taskdef classname="PhingDoxygen.Task.DoxygenTask" name="doxygen"/>
+  
+  <!-- Pyrus tasks. -->
+  <includepath classpath="/Users/mbutcher/Code"/> <!-- Pyrus is here. -->
+  <includepath classpath="../PhingPyrus/src"/>
+  <taskdef classname="PhingPyrus.Task.PyrusMakeTask" name="pyrusmake"/>
+  <taskdef classname="PhingPyrus.Task.PyrusPackageTask" name="pyruspackage"/>
+  <taskdef classname="PhingPyrus.Task.PyrusHelpTask" name="pyrushelp"/>
+  <taskdef classname="PhingPyrus.Task.PyrusExecTask" name="pyrusexec"/>
+  
   
   
   <!-- Directory locations -->
@@ -333,6 +342,13 @@ Edit project.properties (or build.xml) to set the above.
       <fileset refid="licensefiles"/>
     </copy>
     
+    <!-- Pyrus wants README, not README.md -->
+    <copy file="${releasedir}/README.md" tofile="${releasedir}/README"/>
+
+    <!-- Create API and RELEASE files -->
+    <touch file="${releasedir}/API-${version}"/>
+    <touch file="${releasedir}/RELEASE-${version}"/>
+    
     <!-- Copy source code, doing token replacement on version. -->
     <copy todir="${releasedir}/src">
       <filterchain>
@@ -370,52 +386,12 @@ Edit project.properties (or build.xml) to set the above.
       <fileset refid="data"/>
     </copy>
     
-    <!-- Create a PEAR package.xml file -->
-    <pearpkg2 name="${projectname}" dir="./">
-       <fileset dir="${releasedir}">
-         <include name="**/**"/>
-       </fileset>
-       <option name="uri" value="${project.homepage}"/>
-       <option name="packagefile" value="package2.xml"/>
-       <option name="channel" value="${pear.channel}"/>
-       <option name="baseinstalldir" value="${projectname}"/>
-       <option name="summary" value="${project.summary}"/>
-       <option name="description" value="${project.description}"/>
-       <option name="apiversion" value="${version}"/>
-       <option name="apistability" value="${stability}"/>
-       <option name="releaseversion" value="${version}"/>
-       <option name="releasestability" value="${stability}"/>
-       <option name="license" value="${project.license}"/>
-       <option name="phpdep" value="${project.php.version}"/>
-       <option name="pearinstallerdep" value="${pear.version}"/>
-       <option name="packagetype" value="php"/>
-       <option name="notes" value="This package was built automatically by Phing/MetaPhing"/>
-       <option name="outputdirectory" value="./${builddir}"/>
-       <option name="packagedirectory" value="./${releasedir}"/>
-       <mapping name="maintainers">
-        <element>
-         <element key="handle" value="${project.lead}"/>
-         <element key="name" value="${project.lead}"/>
-         <element key="email" value="${project.lead.email}"/>
-         <element key="role" value="lead"/>
-        </element>
-       </mapping>
-    </pearpkg2>
-    
-    <!-- Move the package.xml to the releasedir -->
-    <move file="${builddir}/package2.xml" tofile="${packagedir}/package.xml"/>
-    
-    <!-- Create Gzipped Tar file that acts like a PEAR package. This will be put in dist/ -->
-    <tar destfile="${packagedir}/${projectname}-${version}.tgz" compression="gzip">
-      <fileset dir="${builddir}">
-        <include name="${projectname}-${version}/**/*"/>
-        <include name="package.xml"/>
-      </fileset>
-    </tar>
-    
-    <!-- Create a ZIP version which is NOT a PEAR package. Put in dist/. -->
-    <zip destfile="${packagedir}/${projectname}-${version}.zip" basedir="${releasedir}"/>
+    <pyrusmake dir="${releasedir}" packagename="${projectname}" channel="${pear.channel}"/>
+    <pyruspackage packagexml="${releasedir}/package.xml"/>
+    <move file="./${projectname}-${version}.tgz" tofile="${packagedir}/${projectname}-${version}.tgz"/>
+    <pirumadd targetdir="${pearchannel}" packagefile="${packagedir}/${projectname}-${version}.tgz"/>
   </target>
+  
   
   <!-- TARGET
     
