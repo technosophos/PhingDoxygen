@@ -222,6 +222,9 @@ To print this message, do:
     <include name="INSTALL"/>
     <include name="COPYING-MIT.txt"/>
     <include name="CREDITS"/>
+    <include name="README.pear"/>
+    <include name="RELEASE"/>
+    <include name="API"/>
   </fileset>
   
   <!-- Files to be treated as source code -->
@@ -350,12 +353,13 @@ Edit project.properties (or build.xml) to set the above.
       <fileset refid="licensefiles"/>
     </copy>
     
-    <!-- Pyrus wants README, not README.md -->
-    <copy file="${releasedir}/README.md" tofile="${releasedir}/README"/>
+    <!-- Pyrus wants README, not README.pear -->
+    <copy file="${releasedir}/README.pear" tofile="${releasedir}/README"/>
 
     <!-- Create API and RELEASE files -->
-    <touch file="${releasedir}/API-${version}"/>
-    <touch file="${releasedir}/RELEASE-${version}"/>
+    <copy file="${releasedir}/API" tofile="${releasedir}/API-${version}"/>
+    <copy file="${releasedir}/RELEASE" tofile="${releasedir}/RELEASE-${version}"/>
+   
     
     <!-- Copy source code, doing token replacement on version. -->
     <copy todir="${releasedir}/src">
