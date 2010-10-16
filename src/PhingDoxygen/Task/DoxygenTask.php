@@ -15,7 +15,7 @@ require_once 'phing/Task.php';
  * The main Doxygen task.
  *
  * This task is used for building documentation using the Doxygen tool. It is a 
- * wrapper around the @tt doxygen command line client.
+ * wrapper around the doxygen command line client.
  */
 class DoxygenTask extends Task {
   

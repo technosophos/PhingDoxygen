@@ -1,7 +1,9 @@
 <?php
 /** @mainpage PhingDoxygen
  * 
- * This is the main page for documentation.
+ * Version -UNSTABLE%.
+ *
+ * This is the main page for documentation
  *
  * @section about_package About This Software
  *

@@ -1,0 +1,7 @@
+A Phing build task for Doxygen.
+
+This release adds basic tasks for extracting Doxygen documentation from PHP source code. You can use this as a replacement for PhpDocumentor in your Phing scripts.
+
+In this release:
+
+- PhingDoxygen.Task.DoxygenTask
