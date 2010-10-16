@@ -179,18 +179,21 @@ To print this message, do:
     * Two taskdefs for Phing Pirum tasks
     * A property, pearchannel, setting the location of your PEAR channel.
   -->
-  <!--
+  
   <includepath classpath="../Phing-Pirum/src"/>
   <taskdef classname="PhingPirum.Task.PirumBuildTask" name="pirumbuild"/>
   <taskdef classname="PhingPirum.Task.PirumAddTask" name="pirumadd"/>
   <property name="pearchannel" value="../pear.querypath.org"/>
-  -->
+  
+  <includepath classpath="./src"/>
+  <taskdef classname="PhingDoxygen.Task.DoxygenTask" name="doxygen"/>
+  
   
   <!-- Directory locations -->
   <property name="srcdir" value="./src"/>
   <property name="testdir" value="./test"/>
   <property name="builddir" value="./bin/build"/>
-  <property name="docsdir" value="./doc"/>
+  <property name="docsdir" value="./doc/api"/>
   <property name="packagedir" value="./dist"/>
   <property name="datadir" value="./data"/>
   <property name="exampledir" value="./examples"/>
@@ -432,27 +435,8 @@ Edit project.properties (or build.xml) to set the above.
   -->
   <target name="doc" depends="lint,setup" description="Generate API docs.">
     <delete dir="${docsdir}"/>
-    <phpdoc title="${projectname} ${version}"
-      sourcecode="yes"
-      destdir="${docsdir}"
-      output="${phpdoc.style}" 
-      defaultcategoryname="${projectname}"
-      defaultpackagename="${projectname}"
-      examplesdir="examples"
-      quiet="true"
-      >
-      <fileset refid="sourcecode"/>
-      <fileset refid="tutorials"/>
-      <fileset refid="examplecode"/>
-      <projdocfileset dir=".">
-        <include name="README.md"/>
-        <include name="README"/>
-        <include name="INSTALL"/>
-        <include name="COPYING-MIT.txt"/>
-        <include name="RELEASE-*"/>
-        <include name="API-*"/>
-      </projdocfileset>
-    </phpdoc>
+    
+    <doxygen config="./config.doxy"/>
     
     <!-- 
     During documentation generation, this will replace the string @UNSTABLE@ with
@@ -479,8 +463,7 @@ Edit project.properties (or build.xml) to set the above.
   
   To set this to execute different things, simply change depends= to something else.
   -->
-  <target name="tmtarget" depends="info" description="Target for textmate">
-    <echo>Executed tmtarget in build.xml.</echo>
+  <target name="tmtarget" depends="doc" description="Target for textmate">
   </target>
   
   <!-- TARGET
@@ -526,51 +509,13 @@ Edit project.properties (or build.xml) to set the above.
         />
   </target>
   
-  <!-- TARGET 
-  Run a coverage report.
-  
-  Run a report to determine to what extent your code has been covered by the unit tests.
-  -->
-  <target name="coverage" depends="lint" description="Run a coverage analysis.">
-    <coverage-setup database="./test/db/coverage.db">
-      <fileset refid="sourcecode"/>
-    </coverage-setup>
-    <phpunit codecoverage="true" haltonfailure="true">
-      <formatter type="plain" todir="test/reports" outfile="coverage.xml"/>
-      <batchtest>
-        <fileset dir="test/Tests">
-          <include name="**/*Test.php"/>
-        </fileset>
-      </batchtest>
-    </phpunit>
-    <coverage-report outfile="test/reports/coverage.xml">
-      <report todir="test/coverage"/>
-    </coverage-report>
-  </target>
-  
   <!-- TARGET
   Run a full test and format an HTML report.
   
   This differs from tmtest in that the output for this report is more robust, designed for
   detailed viewing, not viewing quickly in a pop-up window.
   -->
-  <target name="test" depends="lint,pretest" description="Run full tests">
-    <mkdir dir="test/reports/html"/>
-    <mkdir dir="test/db"/>
-    <phpunit>
-      <formatter todir="test/reports" type="xml"/>
-      <batchtest>
-        <fileset dir="test/Tests">
-          <include name="**/*Test.php"/>
-        </fileset>
-      </batchtest>
-    </phpunit>
-    <phpunitreport 
-      infile="test/reports/testsuites.xml" 
-      format="frames" 
-      todir="test/reports/html" 
-      />
-  </target>
+  <target name="test" depends="lint,pretest" description="Run full tests"></target>
   
   <!-- TARGET
   Build a documentation-only package.
@@ -653,20 +598,6 @@ Edit project.properties (or build.xml) to set the above.
     </pharpackage>
   </target>
   
-  <!-- TARGET
-  Use Pyrus to generate package.xml files. 
-  -->
-  <target name="pyrusMake" depends="setup,prebuild" description="EXPERIMENTAL: Use Pyrus to generate a package.xml file from this project.">
-    
-  </target>
-  
-  <!-- TARGET
-  
-  Use Pyrus to create a PEAR package. 
-  -->
-  <target name="pyrusPackage" depends="setup,prebuild" description="EXPERIMENTAL: Use Pyrus to generate a PEAR package.">
-    
-  </target>
 
   <!-- TARGET
   Release code to a PEAR channel.
