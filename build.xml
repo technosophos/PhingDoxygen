@@ -388,10 +388,12 @@ Edit project.properties (or build.xml) to set the above.
     </copy>
     -->
     
-    <!-- Copy documentation --> 
+    <!-- Copy documentation -->
+    <!--
     <copy todir="${releasedir}/doc">
       <fileset refid="docs"/>
     </copy>
+    -->
     
     <!-- Copy data dir -->
     <copy todir="${releasedir}/data">
